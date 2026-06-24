@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AniLoka Manga — Details</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:62px}
+/* ── Banner ── */
+.det-banner{position:relative;height:55vh;min-height:340px;overflow:hidden}
+.det-banner img{width:100%;height:100%;object-fit:cover;filter:blur(2px) brightness(.45);transform:scale(1.06)}
+.det-banner-grad{position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,rgba(5,5,5,.4) 50%,transparent 100%)}
+/* ── Info card ── */
+.det-body{max-width:1100px;margin:0 auto;padding:0 4vw 50px}
+.det-info{display:flex;gap:28px;margin-top:-110px;position:relative;z-index:5;flex-wrap:wrap;align-items:flex-end}
+.det-cover{width:160px;flex-shrink:0;border-radius:var(--radius-lg);overflow:hidden;border:3px solid var(--border);box-shadow:0 8px 40px rgba(0,0,0,.8),0 0 20px var(--glow)}
+.det-cover img{width:100%;display:block}
+@media(max-width:560px){.det-cover{width:110px}}
+.det-meta{flex:1;min-width:180px;padding-top:12px}
+.det-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,3.8rem);line-height:1;letter-spacing:.03em;color:#fff;margin-bottom:6px}
+.det-author{font-size:.85rem;color:var(--accent);font-weight:700;margin-bottom:10px;letter-spacing:.04em}
+.det-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.det-tag{padding:4px 12px;border-radius:20px;border:1px solid var(--border);font-size:.75rem;color:var(--text-dim);background:var(--card)}
+.det-stats{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:18px}
+.det-stat{display:flex;flex-direction:column;gap:2px}
+.det-stat-lbl{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
+.det-stat-val{font-size:.95rem;font-weight:700;color:#fff}
+.det-actions{display:flex;gap:9px;flex-wrap:wrap}
+/* desc */
+.det-desc{margin-top:28px;font-size:.92rem;line-height:1.8;color:rgba(255,255,255,.72);max-width:740px}
+.det-desc.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.read-more-btn{color:var(--accent);font-size:.82rem;font-weight:700;cursor:pointer;margin-top:7px;display:inline-block}
+/* ── Chapter list ── */
+.ch-filters{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.ch-filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text-dim);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
+.ch-filter-btn.on{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.ch-search{flex:1;max-width:280px}
+.ch-list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto;padding-right:4px}
+.ch-item{display:flex;align-items:center;gap:14px;padding:13px 15px;border-radius:var(--radius);background:var(--card);border:1px solid var(--border);cursor:pointer;transition:border-color .2s,background .2s}
+.ch-item:hover{border-color:var(--accent);background:var(--card2)}
+.ch-item.read{opacity:.55}
+.ch-num{width:38px;height:38px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:var(--accent);flex-shrink:0}
+.ch-info{flex:1;min-width:0}
+.ch-title{font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-meta{font-size:.74rem;color:var(--text-dim);margin-top:2px;display:flex;gap:8px}
+.ch-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ch-play{width:34px;height:34px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);transition:background .2s,color .2s}
+.ch-item:hover .ch-play{background:var(--accent);color:#000}
+.ch-locked{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dim)}
+/* ── Similar ── */
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:13px}
+/* ── Reviews ── */
+.rev-list{display:flex;flex-direction:column;gap:12px}
+.rev-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.rev-head{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.rev-av{width:36px;height:36px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:.86rem;flex-shrink:0}
+.rev-name{font-weight:700;font-size:.88rem}
+.rev-date{font-size:.73rem;color:var(--text-dim);margin-top:1px}
+.rev-body{font-size:.86rem;color:rgba(255,255,255,.68);line-height:1.6}
+/* add review */
+.rev-add{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:18px}
+.rev-stars-input{display:flex;gap:4px;margin:10px 0;font-size:1.5rem;cursor:pointer}
+.rev-star-i{color:#2a2a2a;transition:color .15s}
+.rev-star-i.lit{color:var(--accent)}
+/* lock modal */
+.lock-box{text-align:center;padding:10px 0}
+.lock-icon{font-size:3rem;margin-bottom:12px}
+</style>
+</head>
+<body class="page-in">
+<div id="nav-ph" data-p=""></div>
+<div id="toast-root"></div>
+
+<div class="det-banner" id="detBanner">
+  <img id="bannerImg" src="" alt="">
+  <div class="det-banner-grad"></div>
+</div>
+
+<div class="det-body">
+  <div class="det-info">
+    <div class="det-cover"><img id="coverImg" src="" alt=""></div>
+    <div class="det-meta">
+      <div class="det-author" id="detAuthor"></div>
+      <div class="det-title"  id="detTitle"></div>
+      <div class="det-tags"   id="detTags"></div>
+      <div class="det-stats"  id="detStats"></div>
+      <div class="det-actions" id="detActions"></div>
+    </div>
+  </div>
+
+  <p class="det-desc clamp" id="detDesc"></p>
+  <span class="read-more-btn" id="rmBtn" onclick="toggleDesc()">Read more ▾</span>
+
+  <!-- TABS -->
+  <div class="tabs" style="margin-top:36px">
+    <div class="tab active" onclick="switchTab('chapters',this)">Chapters</div>
+    <div class="tab" onclick="switchTab('similar',this)">Similar</div>
+    <div class="tab" onclick="switchTab('reviews',this)">Reviews</div>
+  </div>
+
+  <!-- CHAPTERS -->
+  <div class="tab-panel active" id="tabChapters">
+    <div class="ch-filters">
+      <button class="ch-filter-btn on" onclick="filterCh('all',this)">All</button>
+      <button class="ch-filter-btn" onclick="filterCh('free',this)">Free</button>
+      <button class="ch-filter-btn" onclick="filterCh('premium',this)">Premium</button>
+      <div class="search-bar ch-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="chSearch" placeholder="Search chapter…" oninput="searchCh(this.value)">
+      </div>
+    </div>
+    <div class="ch-list" id="chList"></div>
+  </div>
+
+  <!-- SIMILAR -->
+  <div class="tab-panel" id="tabSimilar">
+    <div class="sim-grid" id="simGrid"></div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="tab-panel" id="tabReviews">
+    <div class="rev-add" id="revAdd">
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:6px">Write a Review</div>
+      <div class="rev-stars-input" id="starInput">
+        <span class="rev-star-i" data-v="1">★</span><span class="rev-star-i" data-v="2">★</span>
+        <span class="rev-star-i" data-v="3">★</span><span class="rev-star-i" data-v="4">★</span>
+        <span class="rev-star-i" data-v="5">★</span>
+      </div>
+      <textarea class="form-input" id="revText" placeholder="Share your thoughts…" rows="3" style="resize:vertical;margin-bottom:10px"></textarea>
+      <button class="btn btn-primary btn-sm" onclick="submitReview()">Post Review</button>
+    </div>
+    <div class="rev-list" id="revList"></div>
+  </div>
+</div>
+
+<!-- Lock modal -->
+<div class="modal-bg" id="lockModal">
+  <div class="modal-box">
+    <div class="modal-head"><div class="modal-title">Premium Chapter</div>
+      <button class="modal-close" onclick="closeLock()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="lock-box">
+      <div class="lock-icon">🔒</div>
+      <p style="color:var(--text-dim);font-size:.88rem;margin-bottom:20px">This chapter is for Premium members. Upgrade to read without limits.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <a href="profile.html#plans" class="btn btn-primary">Get Premium</a>
+        <button class="btn btn-ghost" onclick="closeLock()">Maybe Later</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="foot-ph"></div>
+<script src="app.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+const slug=params.get('slug')||'demon-slayer';
+const manga=MANGA_DB.find(m=>m.slug===slug)||MANGA_DB[0];
+let descOpen=false, userRating=0;
+
+const CH_TITLES=['The Beginning','A New World','Rising Threat','Dark Descent','Blood Moon',
+  'The Oath','Flames of War','Shadow Step','Broken Chains','Last Hope','Awakening','Final Stand'];
+const CH_DATES=['2 days ago','5 days ago','1 week ago','2 weeks ago','3 weeks ago','1 month ago',
+  '1 month ago','2 months ago','2 months ago','3 months ago','4 months ago','5 months ago'];
+
+let allChapters=[];
+
+function populate(){
+  document.title=`AniLoka — ${manga.title}`;
+  document.getElementById('bannerImg').src=manga.banner;
+  document.getElementById('bannerImg').alt=manga.title;
+  document.getElementById('coverImg').src=manga.cover;
+  document.getElementById('coverImg').alt=manga.title;
+  document.getElementById('detTitle').textContent=manga.title;
+  document.getElementById('detAuthor').textContent='✍️ '+manga.author+' · '+manga.year;
+
+  const inBM=AL.bookmarks.includes(manga.id);
+  const inFV=AL.favorites.includes(manga.id);
+
+  document.getElementById('detTags').innerHTML=
+    manga.genres.map(g=>`<span class="det-tag">${g}</span>`).join('')+
+    `<span class="badge ${manga.plan==='premium'?'badge-premium':'badge-free'}">${manga.plan==='premium'?'⭐ Premium':'Free'}</span>`+
+    `<span class="badge ${manga.status==='ongoing'?'badge-ongoing':'badge-completed'}">${manga.status}</span>`;
+
+  document.getElementById('detStats').innerHTML=`
+    <div class="det-stat"><span class="det-stat-lbl">Rating</span><span class="det-stat-val">⭐ ${manga.rating}</span></div>
+    <div class="det-stat"><span class="det-stat-lbl">Chapters</span><span class="det-stat-val">${manga.chapters}</span></div>
+    <div class="det-stat"><span class="det-stat-lbl">Status</span><span class="det-stat-val" style="text-transform:capitalize">${manga.status}</span></div>
+    <div class="det-stat"><span class="det-stat-lbl">Direction</span><span class="det-stat-val">${manga.direction==='rtl'?'Right→Left':manga.direction==='ltr'?'Left→Right':'Vertical Scroll'}</span></div>`;
+
+  document.getElementById('detActions').innerHTML=`
+    <button class="btn btn-primary btn-lg" onclick="goReader('${manga.slug}',1)">📖 Read Chapter 1</button>
+    <button class="btn btn-secondary" id="bmBtn" onclick="doBM()">
+      ${inBM?'🔖 Bookmarked':'🔖 Bookmark'}
+    </button>
+    <button class="btn btn-secondary" id="fvBtn" onclick="doFV()" title="${inFV?'Remove Favorite':'Add Favorite'}">
+      <span id="fvIcon">${inFV?'❤️':'🤍'}</span>
+    </button>`;
+
+  document.getElementById('detDesc').textContent=manga.desc;
+  addHistory(manga);
+}
+
+function doBM(){
+  toggleBookmark(manga.id,manga.title);
+  const inBM=AL.bookmarks.includes(manga.id);
+  document.getElementById('bmBtn').textContent=inBM?'🔖 Bookmarked':'🔖 Bookmark';
+}
+function doFV(){
+  toggleFavorite(manga.id,manga.title);
+  document.getElementById('fvIcon').textContent=AL.favorites.includes(manga.id)?'❤️':'🤍';
+}
+function toggleDesc(){
+  descOpen=!descOpen;
+  document.getElementById('detDesc').classList.toggle('clamp',!descOpen);
+  document.getElementById('rmBtn').textContent=descOpen?'Read less ▴':'Read more ▾';
+}
+
+/* ── Chapters ── */
+function buildChapters(list){
+  const isPrem=AL.premium;
+  document.getElementById('chList').innerHTML=list.map((ch,i)=>{
+    const isLocked=manga.plan==='premium'&&!isPrem&&i>2;
+    const isRead=AL.progress[`${manga.slug}_${ch.num}`];
+    return `<div class="ch-item${isRead?' read':''}" onclick="${isLocked?'openLock()':'goReader(\''+manga.slug+'\','+ch.num+')'}">
+      <div class="ch-num">${ch.num}</div>
+      <div class="ch-info">
+        <div class="ch-title">Chapter ${ch.num}: ${ch.title}</div>
+        <div class="ch-meta"><span>📅 ${ch.date}</span><span>${isRead?'✓ Read':'Unread'}</span>${isLocked?'<span class="badge badge-premium">⭐ Premium</span>':''}</div>
+      </div>
+      <div class="ch-right">
+        ${isLocked
+          ?`<div class="ch-locked"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>`
+          :`<div class="ch-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterCh(type,btn){
+  document.querySelectorAll('.ch-filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const f=type==='all'?allChapters:type==='free'?allChapters.filter((_,i)=>!(manga.plan==='premium'&&i>2)):allChapters.filter((_,i)=>manga.plan==='premium'&&i>2);
+  buildChapters(f);
+}
+function searchCh(q){
+  const f=allChapters.filter(c=>c.title.toLowerCase().includes(q.toLowerCase())||String(c.num).includes(q));
+  buildChapters(f);
+}
+
+/* ── Similar ── */
+function buildSimilar(){
+  const sim=MANGA_DB.filter(m=>m.id!==manga.id&&m.genres.some(g=>manga.genres.includes(g))).slice(0,8);
+  document.getElementById('simGrid').innerHTML=sim.map(buildCard).join('');
+}
+
+/* ── Reviews ── */
+const SAMPLE_REVIEWS=[
+  {n:'Arjun M.',r:9,t:'Absolute masterpiece. Every chapter leaves you wanting more. The art style is incredible.',d:'3 days ago'},
+  {n:'Priya S.',r:8,t:'Stunning artwork and a gripping story. One of the best I\'ve read on this platform.',d:'1 week ago'},
+  {n:'Rahul K.',r:10,t:'Peak fiction. The world-building is unmatched. Every character has real depth.',d:'2 weeks ago'},
+  {n:'Sneha T.',r:7,t:'Great series! Pacing could be tighter in the middle arcs but totally worth it.',d:'1 month ago'},
+];
+let reviews=[...SAMPLE_REVIEWS];
+
+function renderReviews(){
+  document.getElementById('revList').innerHTML=reviews.map(r=>`
+  <div class="rev-card">
+    <div class="rev-head">
+      <div class="rev-av">${r.n[0]}</div>
+      <div><div class="rev-name">${r.n}</div><div class="rev-date">${starsHTML(r.r)} · ${r.d}</div></div>
+    </div>
+    <p class="rev-body">${r.t}</p>
+  </div>`).join('');
+}
+
+/* Star input */
+document.addEventListener('DOMContentLoaded',()=>{
+  const stars=document.querySelectorAll('.rev-star-i');
+  stars.forEach(s=>{
+    s.addEventListener('click',()=>{
+      userRating=+s.dataset.v;
+      stars.forEach(x=>x.classList.toggle('lit',+x.dataset.v<=userRating));
+    });
+    s.addEventListener('mouseover',()=>stars.forEach(x=>x.classList.toggle('lit',+x.dataset.v<=+s.dataset.v)));
+    s.addEventListener('mouseout',()=>stars.forEach(x=>x.classList.toggle('lit',+x.dataset.v<=userRating)));
+  });
+});
+
+function submitReview(){
+  if(!AL.user){toast('Sign in to post a review','err');return;}
+  const txt=document.getElementById('revText').value.trim();
+  if(!txt){toast('Write something first!','err');return;}
+  if(!userRating){toast('Select a star rating first','err');return;}
+  const u=AL.user;
+  reviews.unshift({n:u.name||u.email,r:userRating*2,t:txt,d:'Just now'});
+  renderReviews();
+  document.getElementById('revText').value='';
+  userRating=0;
+  document.querySelectorAll('.rev-star-i').forEach(s=>s.classList.remove('lit'));
+  toast('Review posted!','ok');
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('active');
+}
+
+function openLock(){document.getElementById('lockModal').classList.add('open')}
+function closeLock(){document.getElementById('lockModal').classList.remove('open')}
+document.getElementById('lockModal').addEventListener('click',e=>{if(e.target===document.getElementById('lockModal'))closeLock()});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  populate();
+  const total=Math.min(manga.chapters,20);
+  allChapters=Array.from({length:total},(_,i)=>({
+    num:i+1,
+    title:CH_TITLES[i%CH_TITLES.length],
+    date:CH_DATES[i%CH_DATES.length]
+  }));
+  buildChapters(allChapters);
+  buildSimilar();
+  renderReviews();
+});
+</script>
+</body>

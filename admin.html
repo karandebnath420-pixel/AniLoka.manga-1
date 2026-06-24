@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AniLoka Manga — Admin Panel</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:0;background:var(--bg)}
+/* ── Admin Layout ── */
+.admin-wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+@media(max-width:900px){.admin-wrap{grid-template-columns:1fr}}
+/* ── Sidebar ── */
+.adm-sidebar{
+  background:var(--bg2);border-right:1px solid var(--border);
+  padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+@media(max-width:900px){.adm-sidebar{display:none}}
+.adm-sidebar-logo{padding:22px 20px;border-bottom:1px solid var(--border)}
+.adm-sidebar-logo .logo{font-size:1.7rem}
+.adm-sidebar-logo small{font-size:.55rem;color:var(--text-dim);letter-spacing:.14em;display:block;margin-top:-2px}
+.adm-admin-tag{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:4px}
+.adm-nav{padding:12px 0;flex:1}
+.adm-nav-section{padding:8px 16px 4px;font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)}
+.adm-nav-btn{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--text-dim);font-size:.86rem;font-weight:600;cursor:pointer;transition:all .2s;border-left:3px solid transparent;margin:1px 0}
+.adm-nav-btn:hover{color:#fff;background:rgba(255,255,255,.05)}
+.adm-nav-btn.on{color:var(--accent);background:var(--accent-dim);border-left-color:var(--accent)}
+.adm-nav-icon{font-size:1rem;width:20px;text-align:center}
+.adm-sidebar-footer{padding:16px;border-top:1px solid var(--border);margin-top:auto}
+.adm-user-chip{display:flex;align-items:center;gap:10px}
+.adm-user-av{width:34px;height:34px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:.85rem;flex-shrink:0}
+/* ── Main ── */
+.adm-main{display:flex;flex-direction:column;overflow-x:hidden}
+.adm-topbar{
+  height:56px;display:flex;align-items:center;padding:0 24px;gap:14px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.adm-topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;flex:1}
+.adm-content{padding:24px;flex:1}
+/* ── Stat cards ── */
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.stat-card:hover{border-color:var(--accent);box-shadow:0 0 18px var(--glow)}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;background:var(--accent-dim);transform:translate(20px,-20px)}
+.stat-card-icon{font-size:1.5rem;margin-bottom:10px}
+.stat-card-val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--accent);line-height:1;margin-bottom:4px}
+.stat-card-lbl{font-size:.78rem;color:var(--text-dim);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.stat-card-delta{font-size:.74rem;margin-top:6px;font-weight:600}
+.stat-card-delta.up{color:#2ed573}
+.stat-card-delta.dn{color:#E53935}
+/* ── Panels ── */
+.adm-panel{display:none}
+.adm-panel.on{display:block}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.panel-head h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em}
+/* ── Table ── */
+.adm-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+.adm-table{width:100%;border-collapse:collapse;font-size:.84rem}
+.adm-table th{padding:12px 14px;text-align:left;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);border-bottom:1px solid var(--border);background:var(--bg2)}
+.adm-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text);vertical-align:middle}
+.adm-table tr:last-child td{border-bottom:none}
+.adm-table tr:hover td{background:rgba(255,255,255,.02)}
+.adm-table td img{width:40px;height:56px;object-fit:cover;border-radius:6px}
+.tbl-actions{display:flex;gap:6px}
+.tbl-btn{padding:5px 12px;border-radius:6px;font-size:.74rem;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.tbl-edit{background:var(--accent-dim);color:var(--accent)}
+.tbl-edit:hover{background:var(--accent);color:#000}
+.tbl-del{background:rgba(229,57,53,.12);color:#E53935}
+.tbl-del:hover{background:#E53935;color:#fff}
+.tbl-view{background:rgba(255,255,255,.07);color:#fff}
+.tbl-view:hover{background:rgba(255,255,255,.14)}
+/* ── Form sections ── */
+.form-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:16px}
+.form-section-title{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:700px){.form-grid.three{grid-template-columns:1fr 1fr}}
+.form-full{grid-column:1/-1}
+/* drag drop upload */
+.upload-zone{
+  border:2px dashed var(--border);border-radius:var(--radius-lg);padding:32px;
+  text-align:center;cursor:pointer;transition:border-color .2s,background .2s;
+  background:rgba(255,255,255,.02);
+}
+.upload-zone:hover,.upload-zone.over{border-color:var(--accent);background:var(--accent-dim)}
+.upload-zone .uz-icon{font-size:2.5rem;margin-bottom:10px}
+.upload-zone .uz-title{font-weight:700;color:#fff;margin-bottom:4px}
+.upload-zone .uz-sub{font-size:.78rem;color:var(--text-dim)}
+.upload-zone input[type=file]{display:none}
+/* preview strip */
+.preview-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.preview-item{position:relative;width:60px;height:80px;border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.preview-item img{width:100%;height:100%;object-fit:cover}
+.preview-del{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.8);color:#fff;font-size:.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+/* progress upload */
+.upload-prog{margin-top:10px;display:none}
+.upload-prog.show{display:block}
+/* user table badges */
+.usr-status{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.usr-free{background:rgba(255,255,255,.08);color:#aaa}
+.usr-prem{background:var(--prem-bg);color:#000}
+/* chart mockup */
+.chart-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chart-bar-label{font-size:.78rem;color:var(--text-dim);width:80px;text-align:right;flex-shrink:0}
+.chart-bar-track{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.chart-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-glow));border-radius:4px;transition:width 1s ease}
+.chart-bar-val{font-size:.76rem;color:var(--accent);font-weight:700;width:40px;flex-shrink:0}
+/* ads toggle */
+.ad-slot{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+.ad-slot-info{flex:1}
+.ad-slot-name{font-weight:700;font-size:.88rem;margin-bottom:2px}
+.ad-slot-sub{font-size:.76rem;color:var(--text-dim)}
+/* mobile topnav for admin */
+.adm-mobile-nav{display:none;gap:0;overflow-x:auto;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 4px;-ms-overflow-style:none;scrollbar-width:none}
+.adm-mobile-nav::-webkit-scrollbar{display:none}
+.adm-mob-btn{flex-shrink:0;padding:11px 14px;font-size:.78rem;font-weight:700;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.adm-mob-btn.on{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:900px){.adm-mobile-nav{display:flex}}
+</style>
+</head>
+<body>
+<div id="toast-root"></div>
+
+<div class="admin-wrap">
+  <!-- SIDEBAR -->
+  <aside class="adm-sidebar">
+    <div class="adm-sidebar-logo">
+      <div class="logo"><span class="ani">Ani</span><span class="loka">Loka</span><small>MANGA</small></div>
+      <div class="adm-admin-tag">🛡️ Admin Panel</div>
+    </div>
+    <nav class="adm-nav">
+      <div class="adm-nav-section">Overview</div>
+      <div class="adm-nav-btn on" onclick="showAdmPanel('dashboard',this)"><span class="adm-nav-icon">📊</span>Dashboard</div>
+      <div class="adm-nav-section">Content</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('manga',this)"><span class="adm-nav-icon">📚</span>Manga Library</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('addManga',this)"><span class="adm-nav-icon">➕</span>Add Manga</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('chapters',this)"><span class="adm-nav-icon">📄</span>Chapters</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('uploadPages',this)"><span class="adm-nav-icon">🖼️</span>Upload Pages</div>
+      <div class="adm-nav-section">Users</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('users',this)"><span class="adm-nav-icon">👥</span>All Users</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('plans',this)"><span class="adm-nav-icon">⭐</span>Premium Plans</div>
+      <div class="adm-nav-section">Monetisation</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('ads',this)"><span class="adm-nav-icon">📢</span>Ads Manager</div>
+      <div class="adm-nav-section">System</div>
+      <div class="adm-nav-btn" onclick="showAdmPanel('settings',this)"><span class="adm-nav-icon">⚙️</span>Site Settings</div>
+    </nav>
+    <div class="adm-sidebar-footer">
+      <div class="adm-user-chip">
+        <div class="adm-user-av" id="admAvatar">A</div>
+        <div><div style="font-weight:700;font-size:.85rem" id="admName">Admin</div>
+          <div style="font-size:.72rem;color:var(--text-dim)">Administrator</div></div>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto;padding:5px 9px" onclick="location.href='home.html'" title="Back to site">🏠</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="adm-main">
+    <!-- Mobile nav -->
+    <div class="adm-mobile-nav">
+      <div class="adm-mob-btn on" onclick="showAdmPanel('dashboard',this)">Dashboard</div>
+      <div class="adm-mob-btn" onclick="showAdmPanel('manga',this)">Library</div>
+      <div class="adm-mob-btn" onclick="showAdmPanel('addManga',this)">Add Manga</div>
+      <div class="adm-mob-btn" onclick="showAdmPanel('chapters',this)">Chapters</div>
+      <div class="adm-mob-btn" onclick="showAdmPanel('uploadPages',this)">Upload Pages</div>
+      <div class="adm-mob-btn" onclick="showAdmPanel('users',this)">Users</div>
+      <div class="adm-mob-btn" onclick="showAdmPanel('ads',this)">Ads</div>
+      <div class="adm-mob-btn" onclick="showAdmPanel('settings',this)">Settings</div>
+    </div>
+    <!-- Topbar -->
+    <div class="adm-topbar">
+      <div class="adm-topbar-title" id="admPanelTitle">Dashboard</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:.76rem;color:var(--text-dim)">Last sync: just now</span>
+        <button class="btn btn-primary btn-sm" onclick="location.href='home.html'">🏠 Site</button>
+      </div>
+    </div>
+
+    <div class="adm-content">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="adm-panel on" id="panelDashboard">
+        <div class="stat-cards">
+          <div class="stat-card"><div class="stat-card-icon">📚</div><div class="stat-card-val">12</div><div class="stat-card-lbl">Total Manga</div><div class="stat-card-delta up">↑ 2 this week</div></div>
+          <div class="stat-card"><div class="stat-card-icon">📄</div><div class="stat-card-val">3.2K</div><div class="stat-card-lbl">Total Chapters</div><div class="stat-card-delta up">↑ 48 today</div></div>
+          <div class="stat-card"><div class="stat-card-icon">👥</div><div class="stat-card-val">8.4K</div><div class="stat-card-lbl">Registered Users</div><div class="stat-card-delta up">↑ 124 today</div></div>
+          <div class="stat-card"><div class="stat-card-icon">⭐</div><div class="stat-card-val">1.1K</div><div class="stat-card-lbl">Premium Users</div><div class="stat-card-delta up">↑ 18 today</div></div>
+          <div class="stat-card"><div class="stat-card-icon">📖</div><div class="stat-card-val">42K</div><div class="stat-card-lbl">Reads Today</div><div class="stat-card-delta up">↑ 12%</div></div>
+          <div class="stat-card"><div class="stat-card-icon">₹</div><div class="stat-card-val">₹84K</div><div class="stat-card-lbl">Revenue (Month)</div><div class="stat-card-delta up">↑ 22%</div></div>
+        </div>
+        <!-- Charts -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+          <div class="form-section">
+            <div class="form-section-title">📈 Top Manga (Reads)</div>
+            <div id="topChart"></div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">🌏 Reader Location</div>
+            <div id="locChart"></div>
+          </div>
+        </div>
+        <!-- Recent activity -->
+        <div class="form-section">
+          <div class="form-section-title">🕐 Recent Activity</div>
+          <div id="recentActivity"></div>
+        </div>
+      </div>
+
+      <!-- ── MANGA LIBRARY ── -->
+      <div class="adm-panel" id="panelManga">
+        <div class="panel-head">
+          <h2>Manga Library</h2>
+          <button class="btn btn-primary btn-sm" onclick="showAdmPanel('addManga',null)">➕ Add New</button>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Cover</th><th>Title</th><th>Author</th><th>Chapters</th><th>Status</th><th>Plan</th><th>Rating</th><th>Actions</th></tr></thead>
+            <tbody id="mangaTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── ADD MANGA ── -->
+      <div class="adm-panel" id="panelAddManga">
+        <div class="panel-head"><h2>Add New Manga</h2></div>
+        <div class="form-section">
+          <div class="form-section-title">📋 Basic Info</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="addTitle" placeholder="Manga title"></div>
+            <div class="form-group"><label class="form-label">Author *</label><input type="text" class="form-input" id="addAuthor" placeholder="Author name"></div>
+            <div class="form-group"><label class="form-label">Year</label><input type="number" class="form-input" id="addYear" placeholder="2024" min="1900" max="2099"></div>
+            <div class="form-group"><label class="form-label">Chapters</label><input type="number" class="form-input" id="addCh" placeholder="100"></div>
+            <div class="form-group"><label class="form-label">Rating</label><input type="number" class="form-input" id="addRating" placeholder="8.5" min="0" max="10" step="0.1"></div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-input" id="addStatus"><option value="ongoing">Ongoing</option><option value="completed">Completed</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Plan</label>
+              <select class="form-input" id="addPlan"><option value="free">Free</option><option value="premium">Premium</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Reading Direction</label>
+              <select class="form-input" id="addDir"><option value="rtl">Right-to-Left (Japanese)</option><option value="ltr">Left-to-Right (Western)</option><option value="scroll">Vertical Scroll (Webtoon)</option></select>
+            </div>
+            <div class="form-group form-full"><label class="form-label">Genres (comma separated)</label><input type="text" class="form-input" id="addGenres" placeholder="Action, Fantasy, Romance"></div>
+            <div class="form-group form-full"><label class="form-label">Description</label><textarea class="form-input" id="addDesc" placeholder="Manga description…" rows="4" style="resize:vertical"></textarea></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">🖼️ Cover Image</div>
+          <div class="upload-zone" id="coverZone" onclick="document.getElementById('coverFile').click()" ondragover="onDrag(event,this)" ondragleave="offDrag(this)" ondrop="onDrop(event,'cover')">
+            <input type="file" id="coverFile" accept="image/*" onchange="previewCover(this)">
+            <div class="uz-icon">🖼️</div>
+            <div class="uz-title">Drop cover image here</div>
+            <div class="uz-sub">JPG, PNG, WebP · Max 5MB · Recommended 400×600px</div>
+          </div>
+          <div class="preview-strip" id="coverPreview"></div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">🎨 Banner Image</div>
+          <div class="upload-zone" onclick="document.getElementById('bannerFile').click()" ondragover="onDrag(event,this)" ondragleave="offDrag(this)" ondrop="onDrop(event,'banner')">
+            <input type="file" id="bannerFile" accept="image/*" onchange="previewBanner(this)">
+            <div class="uz-icon">🎨</div>
+            <div class="uz-title">Drop banner image here</div>
+            <div class="uz-sub">JPG, PNG, WebP · Max 10MB · Recommended 1400×400px</div>
+          </div>
+          <div class="preview-strip" id="bannerPreview"></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-lg" onclick="saveManga()">💾 Save Manga</button>
+          <button class="btn btn-ghost btn-lg" onclick="resetMangaForm()">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- ── CHAPTERS ── -->
+      <div class="adm-panel" id="panelChapters">
+        <div class="panel-head">
+          <h2>Chapter Manager</h2>
+          <div style="display:flex;gap:8px">
+            <select class="form-input" id="chMangaSel" style="min-width:180px" onchange="loadChapterTable()">
+              <option value="">Select Manga…</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="addChapterRow()">➕ Add Chapter</button>
+          </div>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>#</th><th>Title</th><th>Pages</th><th>Plan</th><th>Published</th><th>Actions</th></tr></thead>
+            <tbody id="chTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── UPLOAD PAGES ── -->
+      <div class="adm-panel" id="panelUploadPages">
+        <div class="panel-head"><h2>Upload Pages</h2></div>
+        <div class="form-section">
+          <div class="form-section-title">🎯 Target</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Manga</label>
+              <select class="form-input" id="pgManga"><option value="">Select Manga…</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Chapter Number</label>
+              <input type="number" class="form-input" id="pgCh" placeholder="1" min="1">
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">📄 Page Images</div>
+          <div class="upload-zone" id="pagesZone" onclick="document.getElementById('pagesFile').click()" ondragover="onDrag(event,this)" ondragleave="offDrag(this)" ondrop="onDrop(event,'pages')">
+            <input type="file" id="pagesFile" accept="image/*" multiple onchange="previewPages(this)">
+            <div class="uz-icon">📄</div>
+            <div class="uz-title">Drop manga pages here</div>
+            <div class="uz-sub">Multiple files accepted · JPG, PNG, WebP · In reading order</div>
+          </div>
+          <div class="preview-strip" id="pagesPreview" style="max-height:200px;overflow-y:auto"></div>
+          <div class="upload-prog" id="uploadProg">
+            <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-dim);margin-bottom:4px"><span>Uploading…</span><span id="progPct">0%</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="uploadFill" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary btn-lg" onclick="uploadPages()">⬆️ Upload Pages</button>
+          <button class="btn btn-ghost" onclick="clearPageUpload()">↺ Clear</button>
+        </div>
+      </div>
+
+      <!-- ── USERS ── -->
+      <div class="adm-panel" id="panelUsers">
+        <div class="panel-head">
+          <h2>User Management</h2>
+          <div class="search-bar" style="max-width:260px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="userSearch" placeholder="Search users…" oninput="filterUsers(this.value)">
+          </div>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>User</th><th>Email</th><th>Plan</th><th>Joined</th><th>Reads</th><th>Actions</th></tr></thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── PLANS ── -->
+      <div class="adm-panel" id="panelPlans">
+        <div class="panel-head"><h2>Premium Plans</h2></div>
+        <div class="form-section">
+          <div class="form-section-title">⭐ Plan Pricing</div>
+          <div class="form-grid three">
+            <div class="form-group"><label class="form-label">Weekly Price (₹)</label><input type="number" class="form-input" value="49" id="priceWeekly"></div>
+            <div class="form-group"><label class="form-label">Monthly Price (₹)</label><input type="number" class="form-input" value="149" id="priceMonthly"></div>
+            <div class="form-group"><label class="form-label">Yearly Price (₹)</label><input type="number" class="form-input" value="999" id="priceYearly"></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:14px" onclick="savePricing()">Save Pricing</button>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">📊 Plan Breakdown</div>
+          <div id="planBreakdown"></div>
+        </div>
+      </div>
+
+      <!-- ── ADS MANAGER ── -->
+      <div class="adm-panel" id="panelAds">
+        <div class="panel-head"><h2>Ads Manager</h2></div>
+        <div class="form-section">
+          <div class="form-section-title">📢 Ad Slots</div>
+          <div id="adSlots"></div>
+        </div>
+        <div class="form-section" style="margin-top:14px">
+          <div class="form-section-title">➕ Create Ad</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Ad Name</label><input type="text" class="form-input" placeholder="Campaign name"></div>
+            <div class="form-group">
+              <label class="form-label">Ad Type</label>
+              <select class="form-input"><option>Pre-read Banner</option><option>Mid-chapter Banner</option><option>Bottom Banner</option><option>Rewarded (free chapter)</option></select>
+            </div>
+            <div class="form-group form-full"><label class="form-label">Ad Image URL</label><input type="url" class="form-input" placeholder="https://…"></div>
+            <div class="form-group"><label class="form-label">Target URL</label><input type="url" class="form-input" placeholder="https://…"></div>
+            <div class="form-group"><label class="form-label">Show to</label><select class="form-input"><option>Free Users Only</option><option>All Users</option></select></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:14px" onclick="createAd()">Create Ad</button>
+        </div>
+      </div>
+
+      <!-- ── SITE SETTINGS ── -->
+      <div class="adm-panel" id="panelSettings">
+        <div class="panel-head"><h2>Site Settings</h2></div>
+        <div class="form-section">
+          <div class="form-section-title">🌐 General</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Site Name</label><input type="text" class="form-input" value="AniLoka Manga"></div>
+            <div class="form-group"><label class="form-label">Contact Email</label><input type="email" class="form-input" value="hello@aniloka.app"></div>
+            <div class="form-group form-full"><label class="form-label">Site Tagline</label><input type="text" class="form-input" value="India's #1 Manga Reading Platform"></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">🔒 Access Control</div>
+          <div class="ad-slot">
+            <div class="ad-slot-info"><div class="ad-slot-name">Maintenance Mode</div><div class="ad-slot-sub">Show maintenance page to visitors</div></div>
+            <label class="toggle"><input type="checkbox" id="maintMode"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="ad-slot">
+            <div class="ad-slot-info"><div class="ad-slot-name">New Registrations</div><div class="ad-slot-sub">Allow new users to sign up</div></div>
+            <label class="toggle"><input type="checkbox" id="allowReg" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="ad-slot">
+            <div class="ad-slot-info"><div class="ad-slot-name">Guest Reading</div><div class="ad-slot-sub">Allow non-logged-in users to read free chapters</div></div>
+            <label class="toggle"><input type="checkbox" id="guestRead" checked><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="toast('Settings saved!','ok')">💾 Save Settings</button>
+      </div>
+
+    </div><!-- /adm-content -->
+  </div><!-- /adm-main -->
+</div><!-- /admin-wrap -->
+
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  applyTheme();
+  const u=AL.user;
+  if(u){ document.getElementById('admName').textContent=u.name||u.email||'Admin'; document.getElementById('admAvatar').textContent=(u.name||u.email||'A')[0].toUpperCase(); }
+  buildDashboard();
+  buildMangaTable();
+  buildUserTable();
+  buildChSelects();
+  buildAdSlots();
+  buildPlanBreakdown();
+});
+
+function showAdmPanel(id,btn){
+  document.querySelectorAll('.adm-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.adm-nav-btn,.adm-mob-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('on');
+  if(btn){btn.classList.add('on');document.querySelectorAll(`.adm-nav-btn,.adm-mob-btn`).forEach(b=>{if(b.textContent.trim()===btn.textContent.trim())b.classList.add('on');})}
+  const titles={dashboard:'Dashboard',manga:'Manga Library',addManga:'Add New Manga',chapters:'Chapter Manager',uploadPages:'Upload Pages',users:'User Management',plans:'Premium Plans',ads:'Ads Manager',settings:'Site Settings'};
+  document.getElementById('admPanelTitle').textContent=titles[id]||id;
+}
+
+/* Dashboard */
+function buildDashboard(){
+  // top manga chart
+  const topData=[{t:'One Piece',v:92},{t:'Demon Slayer',v:78},{t:'Attack on Titan',v:74},{t:'Jujutsu Kaisen',v:68},{t:'Solo Leveling',v:62}];
+  document.getElementById('topChart').innerHTML=topData.map(d=>`
+  <div class="chart-bar-row">
+    <div class="chart-bar-label">${d.t.split(' ')[0]}</div>
+    <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.v}%"></div></div>
+    <div class="chart-bar-val">${d.v}%</div>
+  </div>`).join('');
+  // location chart
+  const locData=[{t:'India',v:88},{t:'USA',v:45},{t:'Japan',v:32},{t:'Philippines',v:28},{t:'Others',v:20}];
+  document.getElementById('locChart').innerHTML=locData.map(d=>`
+  <div class="chart-bar-row">
+    <div class="chart-bar-label">${d.t}</div>
+    <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${d.v}%"></div></div>
+    <div class="chart-bar-val">${d.v}%</div>
+  </div>`).join('');
+  // recent activity
+  const acts=[
+    {icon:'📚',text:'New manga "Berserk" added',time:'2m ago'},
+    {icon:'👤',text:'User priya@example.com upgraded to Monthly Premium',time:'8m ago'},
+    {icon:'📄',text:'48 new chapter pages uploaded for One Piece Ch.1101',time:'22m ago'},
+    {icon:'⭐',text:'User arjun@example.com subscribed to Yearly plan',time:'1h ago'},
+    {icon:'🗑️',text:'Chapter 5 of Solo Leveling deleted by admin',time:'2h ago'},
+  ];
+  document.getElementById('recentActivity').innerHTML=acts.map(a=>`
+  <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+    <span style="font-size:1.1rem">${a.icon}</span>
+    <span style="flex:1;font-size:.84rem">${a.text}</span>
+    <span style="font-size:.74rem;color:var(--text-dim);flex-shrink:0">${a.time}</span>
+  </div>`).join('');
+}
+
+/* Manga table */
+function buildMangaTable(){
+  document.getElementById('mangaTableBody').innerHTML=MANGA_DB.map(m=>`
+  <tr>
+    <td><img src="${m.cover}" alt="${m.title}"></td>
+    <td><div style="font-weight:700">${m.title}</div><div style="font-size:.74rem;color:var(--text-dim)">${m.direction.toUpperCase()}</div></td>
+    <td>${m.author}</td>
+    <td>${m.chapters}</td>
+    <td><span class="badge ${m.status==='ongoing'?'badge-ongoing':'badge-completed'}">${m.status}</span></td>
+    <td><span class="badge ${m.plan==='premium'?'badge-premium':'badge-free'}">${m.plan==='premium'?'⭐ Prem':'Free'}</span></td>
+    <td style="color:var(--accent);font-weight:700">⭐${m.rating}</td>
+    <td><div class="tbl-actions">
+      <button class="tbl-btn tbl-view" onclick="goDetail('${m.slug}')">View</button>
+      <button class="tbl-btn tbl-edit" onclick="editManga('${m.slug}')">Edit</button>
+      <button class="tbl-btn tbl-del"  onclick="deleteManga('${m.title}')">Del</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+/* User table */
+const DEMO_USERS=[
+  {name:'Arjun Mehta',email:'arjun@example.com',plan:'monthly',joined:'Jan 2025',reads:342},
+  {name:'Priya Singh',email:'priya@example.com',plan:'free',joined:'Feb 2025',reads:89},
+  {name:'Rahul K',email:'rahul@example.com',plan:'yearly',joined:'Nov 2024',reads:910},
+  {name:'Sneha T',email:'sneha@example.com',plan:'free',joined:'Mar 2025',reads:21},
+  {name:'Vikram P',email:'vikram@example.com',plan:'weekly',joined:'Mar 2025',reads:67},
+  {name:'Ananya R',email:'ananya@example.com',plan:'monthly',joined:'Dec 2024',reads:445},
+];
+let filteredUsers=[...DEMO_USERS];
+function buildUserTable(list=DEMO_USERS){
+  document.getElementById('userTableBody').innerHTML=list.map(u=>`
+  <tr>
+    <td><div style="font-weight:700">${u.name}</div></td>
+    <td style="color:var(--text-dim)">${u.email}</td>
+    <td><span class="usr-status ${u.plan!=='free'?'usr-prem':'usr-free'}">${u.plan!=='free'?'⭐ '+u.plan:'Free'}</span></td>
+    <td style="color:var(--text-dim)">${u.joined}</td>
+    <td style="color:var(--accent);font-weight:700">${u.reads}</td>
+    <td><div class="tbl-actions">
+      <button class="tbl-btn tbl-edit" onclick="promoteUser('${u.email}')">Promote</button>
+      <button class="tbl-btn tbl-del"  onclick="banUser('${u.name}')">Ban</button>
+    </div></td>
+  </tr>`).join('');
+}
+function filterUsers(q){ buildUserTable(q?DEMO_USERS.filter(u=>u.name.toLowerCase().includes(q.toLowerCase())||u.email.toLowerCase().includes(q.toLowerCase())):DEMO_USERS); }
+function promoteUser(email){ toast(`${email} promoted to Premium`,'ok'); }
+function banUser(name){ if(confirm(`Ban user ${name}?`)) toast(`${name} has been banned`,'ok'); }
+
+/* Chapter selects */
+function buildChSelects(){
+  const opts=MANGA_DB.map(m=>`<option value="${m.slug}">${m.title}</option>`).join('');
+  ['chMangaSel','pgManga'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<option value="">Select Manga…</option>'+opts; });
+}
+function loadChapterTable(){
+  const slug=document.getElementById('chMangaSel').value;
+  if(!slug){document.getElementById('chTableBody').innerHTML='';return;}
+  const m=MANGA_DB.find(x=>x.slug===slug);
+  const count=Math.min(m.chapters,10);
+  const titles=['The Beginning','A New World','Rising Threat','Dark Descent','Blood Moon','The Oath','Flames of War','Shadow Step','Broken Chains','Last Hope'];
+  document.getElementById('chTableBody').innerHTML=Array.from({length:count},(_,i)=>`
+  <tr>
+    <td style="font-weight:700;color:var(--accent)">${i+1}</td>
+    <td>Chapter ${i+1}: ${titles[i]||'Untitled'}</td>
+    <td>${Math.floor(Math.random()*8+16)} pages</td>
+    <td><span class="badge ${m.plan==='premium'&&i>2?'badge-premium':'badge-free'}">${m.plan==='premium'&&i>2?'⭐ Prem':'Free'}</span></td>
+    <td style="color:var(--text-dim)">${i===0?'Today':''}${i===1?'Yesterday':''}${i>1?`${i*3}d ago`:''}</td>
+    <td><div class="tbl-actions">
+      <button class="tbl-btn tbl-edit" onclick="toast('Edit chapter ${i+1}','ok')">Edit</button>
+      <button class="tbl-btn tbl-del"  onclick="toast('Chapter ${i+1} deleted','ok')">Del</button>
+    </div></td>
+  </tr>`).join('');
+}
+function addChapterRow(){ toast('Chapter add form coming soon','info'); }
+
+/* Manga form */
+function saveManga(){
+  const title=document.getElementById('addTitle').value.trim();
+  if(!title){toast('Title is required','err');return;}
+  toast(`"${title}" saved to manga library!`,'ok'); resetMangaForm();
+  showAdmPanel('manga',null);
+}
+function resetMangaForm(){
+  ['addTitle','addAuthor','addYear','addCh','addRating','addGenres','addDesc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('coverPreview').innerHTML='';
+  document.getElementById('bannerPreview').innerHTML='';
+}
+function editManga(slug){ showAdmPanel('addManga',null); const m=MANGA_DB.find(x=>x.slug===slug); if(!m)return; document.getElementById('addTitle').value=m.title; document.getElementById('addAuthor').value=m.author; document.getElementById('addYear').value=m.year; document.getElementById('addCh').value=m.chapters; document.getElementById('addRating').value=m.rating; document.getElementById('addGenres').value=m.genres.join(', '); document.getElementById('addDesc').value=m.desc; document.getElementById('addStatus').value=m.status; document.getElementById('addPlan').value=m.plan; document.getElementById('addDir').value=m.direction; toast('Loaded "'+m.title+'" for editing','ok'); }
+function deleteManga(title){ if(confirm(`Delete "${title}"? This cannot be undone.`)) toast(`"${title}" deleted`,'ok'); }
+
+/* File upload helpers */
+function onDrag(e,el){e.preventDefault();el.classList.add('over')}
+function offDrag(el){el.classList.remove('over')}
+function onDrop(e,type){e.preventDefault();const dt=e.dataTransfer;if(dt.files.length){if(type==='cover')previewCover({files:dt.files});if(type==='banner')previewBanner({files:dt.files});if(type==='pages')previewPages({files:dt.files});}}
+function previewCover(inp){ const f=inp.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{ document.getElementById('coverPreview').innerHTML=`<div class="preview-item"><img src="${e.target.result}"><div class="preview-del" onclick="this.parentElement.remove()">✕</div></div>`; }; r.readAsDataURL(f); }
+function previewBanner(inp){ const f=inp.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{ document.getElementById('bannerPreview').innerHTML=`<div class="preview-item" style="width:120px"><img src="${e.target.result}"><div class="preview-del" onclick="this.parentElement.remove()">✕</div></div>`; }; r.readAsDataURL(f); }
+function previewPages(inp){ const files=Array.from(inp.files); const strip=document.getElementById('pagesPreview'); strip.innerHTML=''; files.forEach(f=>{ const r=new FileReader(); r.onload=e=>{ const d=document.createElement('div'); d.className='preview-item'; d.innerHTML=`<img src="${e.target.result}"><div class="preview-del" onclick="this.parentElement.remove()">✕</div>`; strip.appendChild(d); }; r.readAsDataURL(f); }); }
+function uploadPages(){
+  const prog=document.getElementById('uploadProg'); const fill=document.getElementById('uploadFill'); const pct=document.getElementById('progPct');
+  prog.classList.add('show'); let p=0;
+  const iv=setInterval(()=>{ p+=Math.random()*8+2; if(p>100)p=100; fill.style.width=p+'%'; pct.textContent=Math.round(p)+'%'; if(p>=100){ clearInterval(iv); toast('Pages uploaded successfully!','ok'); setTimeout(()=>{prog.classList.remove('show');fill.style.width='0%';pct.textContent='0%';},1500); }},120);
+}
+function clearPageUpload(){ document.getElementById('pagesPreview').innerHTML=''; document.getElementById('pagesFile').value=''; }
+
+/* Ads */
+const AD_SLOTS=[
+  {name:'Pre-read Banner',sub:'Shown before chapter loads (free users)',on:true},
+  {name:'Mid-chapter Banner',sub:'Shown after page 10 (free users)',on:true},
+  {name:'Bottom Banner',sub:'Fixed bottom strip (all users)',on:false},
+  {name:'Rewarded Ad',sub:'Watch to unlock a premium chapter',on:true},
+];
+function buildAdSlots(){
+  document.getElementById('adSlots').innerHTML=AD_SLOTS.map((s,i)=>`
+  <div class="ad-slot">
+    <div class="ad-slot-info"><div class="ad-slot-name">${s.name}</div><div class="ad-slot-sub">${s.sub}</div></div>
+    <label class="toggle"><input type="checkbox" ${s.on?'checked':''} onchange="toast('${s.name} '+(this.checked?'enabled':'disabled'),'ok')"><span class="toggle-slider"></span></label>
+  </div>`).join('');
+}
+function createAd(){ toast('Ad created and scheduled!','ok'); }
+
+/* Plan breakdown */
+function buildPlanBreakdown(){
+  const data=[{name:'Weekly',users:234,rev:'₹11,466'},{name:'Monthly',users:678,rev:'₹1,01,022'},{name:'Yearly',users:198,rev:'₹1,97,802'}];
+  document.getElementById('planBreakdown').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+  ${data.map(d=>`<div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+    <div style="font-weight:800;color:#fff;margin-bottom:6px">${d.name}</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--accent)">${d.users}</div>
+    <div style="font-size:.74rem;color:var(--text-dim);margin-bottom:6px">active subscribers</div>
+    <div style="font-weight:700;color:#2ed573;font-size:.88rem">${d.rev}/mo</div>
+  </div>`).join('')}
+  </div>`;
+}
+function savePricing(){ toast('Pricing updated successfully!','ok'); }
+</script>
+</body>
+</html>
+  

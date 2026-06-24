@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AniLoka Manga — Profile</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:62px}
+/* ── Profile Header ── */
+.prof-header{
+  position:relative;overflow:hidden;
+  padding:48px 4vw 0;
+  background:linear-gradient(to bottom,rgba(255,215,0,.05),transparent);
+}
+.prof-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,var(--accent-dim),transparent 70%);pointer-events:none}
+body.premium-theme .prof-header::before{background:radial-gradient(ellipse at 50% 0%,rgba(138,43,226,.12),transparent 70%)}
+.prof-top{display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;margin-bottom:28px;position:relative;z-index:1}
+.prof-av-wrap{position:relative;flex-shrink:0}
+.prof-av{
+  width:100px;height:100px;border-radius:50%;
+  background:var(--card2);border:3px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--accent);
+  box-shadow:0 0 30px var(--glow);position:relative;overflow:hidden;cursor:pointer;
+}
+.prof-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.av-edit{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-size:.75rem;cursor:pointer;border:2px solid var(--bg)}
+.prof-prem-ring{position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--accent);animation:premRing 2s ease-in-out infinite;display:none}
+body.premium-theme .prof-prem-ring{display:block}
+@keyframes premRing{0%,100%{box-shadow:0 0 8px var(--glow)}50%{box-shadow:0 0 24px var(--glow),0 0 48px var(--glow)}}
+.prof-info{flex:1;min-width:180px}
+.prof-name{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.04em;color:#fff;margin-bottom:4px}
+.prof-email{font-size:.85rem;color:var(--text-dim);margin-bottom:10px}
+.prof-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.prof-actions{display:flex;gap:8px;flex-wrap:wrap}
+/* stats strip */
+.prof-stats{display:flex;gap:0;border-top:1px solid var(--border);position:relative;z-index:1}
+.prof-stat{flex:1;padding:16px 0;text-align:center;border-right:1px solid var(--border)}
+.prof-stat:last-child{border-right:none}
+.ps-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--accent);line-height:1}
+.ps-lbl{font-size:.72rem;color:var(--text-dim);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+@media(max-width:480px){.prof-stat{padding:12px 0}.ps-val{font-size:1.4rem}}
+/* ── Body ── */
+.prof-body{max-width:1100px;margin:0 auto;padding:32px 4vw 50px;display:grid;grid-template-columns:240px 1fr;gap:28px}
+@media(max-width:860px){.prof-body{grid-template-columns:1fr}}
+/* sidebar */
+.prof-sidebar{display:flex;flex-direction:column;gap:6px}
+.sidebar-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--radius);color:var(--text-dim);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.sidebar-btn:hover{color:#fff;background:var(--card);border-color:var(--border)}
+.sidebar-btn.on{color:var(--accent);background:var(--accent-dim);border-color:var(--border)}
+.sidebar-btn .sb-icon{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem}
+.sidebar-btn.on .sb-icon{background:var(--accent-dim)}
+/* panels */
+.prof-panel{display:none}
+.prof-panel.on{display:block}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:#fff;margin-bottom:20px}
+/* history card */
+.hist-card{display:flex;gap:12px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:border-color .2s}
+.hist-card:hover{border-color:var(--accent)}
+.hist-card img{width:54px;height:76px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.hist-info{flex:1;min-width:0}
+.hist-title{font-weight:700;font-size:.88rem;margin-bottom:3px}
+.hist-meta{font-size:.75rem;color:var(--text-dim)}
+.hist-prog{margin-top:6px}
+.hist-list{display:flex;flex-direction:column;gap:8px}
+/* plan cards */
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:32px}
+.plan-card{border-radius:var(--radius-lg);border:1px solid var(--border);padding:24px;background:var(--card);position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.plan-card:hover{border-color:var(--accent);box-shadow:0 0 24px var(--glow)}
+.plan-card.featured{border-color:var(--accent);box-shadow:0 0 20px var(--glow)}
+.plan-card.featured::before{content:'BEST VALUE';position:absolute;top:12px;right:-24px;background:var(--accent);color:#000;font-size:.62rem;font-weight:800;letter-spacing:.1em;padding:4px 32px;transform:rotate(45deg);transform-origin:center}
+.plan-name{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.04em;margin-bottom:6px}
+.plan-price{font-size:2rem;font-weight:900;color:var(--accent);margin-bottom:2px}
+.plan-price small{font-size:.85rem;font-weight:400;color:var(--text-dim)}
+.plan-period{font-size:.78rem;color:var(--text-dim);margin-bottom:16px}
+.plan-feats{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.plan-feat{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-dim)}
+.plan-feat .tick{color:var(--accent);font-weight:700}
+.plan-btn{width:100%}
+/* settings form */
+.sett-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:16px}
+.sett-section-title{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sett-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.sett-row:last-child{border-bottom:none}
+.sett-row-info{font-size:.85rem}
+.sett-row-label{color:#fff;font-weight:600;margin-bottom:2px}
+.sett-row-sub{color:var(--text-dim);font-size:.76rem}
+/* toggle switch */
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,.15);border-radius:12px;cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
+/* downloads */
+.dl-item{display:flex;gap:12px;align-items:center;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px}
+.dl-item img{width:46px;height:64px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.dl-info{flex:1;min-width:0}
+.dl-title{font-weight:700;font-size:.86rem;margin-bottom:2px}
+.dl-meta{font-size:.74rem;color:var(--text-dim)}
+.dl-size{font-size:.74rem;color:var(--accent);margin-top:2px}
+.dl-del{width:32px;height:32px;border-radius:50%;background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.2);color:#E53935;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.dl-del:hover{background:rgba(229,57,53,.2)}
+/* edit modal */
+.edit-av-opts{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.av-opt{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s}
+.av-opt:hover,.av-opt.on{border-color:var(--accent);box-shadow:0 0 10px var(--glow)}
+/* empty state */
+.empty-state{text-align:center;padding:48px 20px}
+.empty-icon{font-size:3.5rem;margin-bottom:12px}
+.empty-title{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:7px}
+.empty-sub{color:var(--text-dim);font-size:.85rem;max-width:280px;margin:0 auto 18px}
+</style>
+</head>
+<body class="page-in">
+<div id="nav-ph" data-p="profile"></div>
+<div id="toast-root"></div>
+
+<!-- PROFILE HEADER -->
+<div class="prof-header" id="profHeader">
+  <div class="prof-top">
+    <div class="prof-av-wrap">
+      <div class="prof-av" id="profAv" onclick="openEditModal()">
+        <span id="profInit">?</span>
+        <div class="prof-prem-ring"></div>
+      </div>
+      <div class="av-edit" onclick="openEditModal()">✏️</div>
+    </div>
+    <div class="prof-info">
+      <div class="prof-name" id="profName">Guest</div>
+      <div class="prof-email" id="profEmail">Not signed in</div>
+      <div class="prof-badges" id="profBadges"></div>
+      <div class="prof-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openEditModal()">✏️ Edit Profile</button>
+        <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+  <div class="prof-stats" id="profStats">
+    <div class="prof-stat"><div class="ps-val" id="statChapters">0</div><div class="ps-lbl">Chapters Read</div></div>
+    <div class="prof-stat"><div class="ps-val" id="statManga">0</div><div class="ps-lbl">Manga Read</div></div>
+    <div class="prof-stat"><div class="ps-val" id="statBookmarks">0</div><div class="ps-lbl">Bookmarks</div></div>
+    <div class="prof-stat"><div class="ps-val" id="statFavorites">0</div><div class="ps-lbl">Favorites</div></div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="prof-body">
+  <!-- SIDEBAR -->
+  <div class="prof-sidebar">
+    <div class="sidebar-btn on" onclick="showPanel('continue')">
+      <div class="sb-icon">📖</div>Continue Reading
+    </div>
+    <div class="sidebar-btn" onclick="showPanel('history')">
+      <div class="sb-icon">🕐</div>History
+    </div>
+    <div class="sidebar-btn" onclick="showPanel('bookmarks')">
+      <div class="sb-icon">🔖</div>Bookmarks
+    </div>
+    <div class="sidebar-btn" onclick="showPanel('favorites')">
+      <div class="sb-icon">❤️</div>Favorites
+    </div>
+    <div class="sidebar-btn" onclick="showPanel('downloads')">
+      <div class="sb-icon">📥</div>Downloads
+    </div>
+    <div class="sidebar-btn" onclick="showPanel('plans')" id="plansBtn">
+      <div class="sb-icon">⭐</div>Premium Plans
+    </div>
+    <div class="sidebar-btn" onclick="showPanel('settings')">
+      <div class="sb-icon">⚙️</div>Settings
+    </div>
+    <div id="adminLink" style="display:none">
+      <div class="sidebar-btn" onclick="goAdmin()">
+        <div class="sb-icon">🛡️</div>Admin Panel
+      </div>
+    </div>
+  </div>
+
+  <!-- PANELS -->
+  <div>
+    <!-- CONTINUE READING -->
+    <div class="prof-panel on" id="panelContinue">
+      <div class="panel-title">Continue Reading</div>
+      <div class="hist-list" id="crList"></div>
+    </div>
+    <!-- HISTORY -->
+    <div class="prof-panel" id="panelHistory">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div class="panel-title" style="margin-bottom:0">Read History</div>
+        <button class="btn btn-ghost btn-sm" onclick="clearHistory()">Clear All</button>
+      </div>
+      <div class="hist-list" id="histList"></div>
+    </div>
+    <!-- BOOKMARKS -->
+    <div class="prof-panel" id="panelBookmarks">
+      <div class="panel-title">My Bookmarks</div>
+      <div class="results-grid" id="bmGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px"></div>
+    </div>
+    <!-- FAVORITES -->
+    <div class="prof-panel" id="panelFavorites">
+      <div class="panel-title">My Favorites</div>
+      <div id="fvGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px"></div>
+    </div>
+    <!-- DOWNLOADS -->
+    <div class="prof-panel" id="panelDownloads">
+      <div class="panel-title">Downloads <span style="font-size:1rem;font-family:'Inter',sans-serif;color:var(--text-dim);font-weight:400">(Premium)</span></div>
+      <div id="dlList"></div>
+    </div>
+    <!-- PLANS -->
+    <div class="prof-panel" id="panelPlans">
+      <div class="panel-title">Premium <span style="color:var(--accent)">Plans</span></div>
+      <div class="plans-grid">
+        <!-- Weekly -->
+        <div class="plan-card">
+          <div class="plan-name">Weekly</div>
+          <div class="plan-price">₹49<small>/wk</small></div>
+          <div class="plan-period">Billed every week</div>
+          <div class="plan-feats">
+            <div class="plan-feat"><span class="tick">✓</span> Ad-free reading</div>
+            <div class="plan-feat"><span class="tick">✓</span> All premium chapters</div>
+            <div class="plan-feat"><span class="tick">✓</span> HD quality</div>
+            <div class="plan-feat"><span class="tick">✓</span> Purple premium theme</div>
+            <div class="plan-feat" style="opacity:.4"><span>✗</span> Offline downloads</div>
+            <div class="plan-feat" style="opacity:.4"><span>✗</span> 4K quality</div>
+          </div>
+          <button class="btn btn-outline plan-btn" onclick="subscribe('weekly')">Subscribe Weekly</button>
+        </div>
+        <!-- Monthly -->
+        <div class="plan-card featured">
+          <div class="plan-name">Monthly</div>
+          <div class="plan-price">₹149<small>/mo</small></div>
+          <div class="plan-period">Billed every month</div>
+          <div class="plan-feats">
+            <div class="plan-feat"><span class="tick">✓</span> Ad-free reading</div>
+            <div class="plan-feat"><span class="tick">✓</span> All premium chapters</div>
+            <div class="plan-feat"><span class="tick">✓</span> 4K quality</div>
+            <div class="plan-feat"><span class="tick">✓</span> Offline downloads</div>
+            <div class="plan-feat"><span class="tick">✓</span> Early chapter access</div>
+            <div class="plan-feat"><span class="tick">✓</span> Purple premium theme</div>
+          </div>
+          <button class="btn btn-primary plan-btn" onclick="subscribe('monthly')">Subscribe Monthly</button>
+        </div>
+        <!-- Yearly -->
+        <div class="plan-card">
+          <div class="plan-name">Yearly</div>
+          <div class="plan-price">₹999<small>/yr</small></div>
+          <div class="plan-period">Billed once a year · Save 44%</div>
+          <div class="plan-feats">
+            <div class="plan-feat"><span class="tick">✓</span> Everything in Monthly</div>
+            <div class="plan-feat"><span class="tick">✓</span> Priority support</div>
+            <div class="plan-feat"><span class="tick">✓</span> Exclusive yearly badge</div>
+            <div class="plan-feat"><span class="tick">✓</span> Early access to originals</div>
+            <div class="plan-feat"><span class="tick">✓</span> Unlimited offline manga</div>
+            <div class="plan-feat"><span class="tick">✓</span> Family sharing (up to 3)</div>
+          </div>
+          <button class="btn btn-outline plan-btn" onclick="subscribe('yearly')">Subscribe Yearly</button>
+        </div>
+      </div>
+      <div id="currentPlanBox" style="display:none;background:var(--accent-dim);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="font-size:2rem">⭐</div>
+          <div>
+            <div style="font-weight:700;font-size:1rem;color:#fff">You're a Premium Member!</div>
+            <div style="font-size:.82rem;color:var(--text-dim);margin-top:3px" id="currentPlanLabel"></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="cancelPlan()">Cancel Plan</button>
+        </div>
+      </div>
+    </div>
+    <!-- SETTINGS -->
+    <div class="prof-panel" id="panelSettings">
+      <div class="panel-title">Settings</div>
+      <div class="sett-section">
+        <div class="sett-section-title">Reading Preferences</div>
+        <div class="sett-row">
+          <div class="sett-row-info"><div class="sett-row-label">Default Reading Mode</div><div class="sett-row-sub">Set for all manga</div></div>
+          <select class="filter-select" id="defMode" onchange="AL.readMode=this.value;toast('Saved','ok')">
+            <option value="rtl">RTL (Japanese)</option>
+            <option value="ltr">LTR (Western)</option>
+            <option value="scroll">Vertical Scroll</option>
+          </select>
+        </div>
+        <div class="sett-row">
+          <div class="sett-row-info"><div class="sett-row-label">Auto-advance chapters</div><div class="sett-row-sub">Load next chapter automatically</div></div>
+          <label class="toggle"><input type="checkbox" id="autoAdv" onchange="saveSett()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="sett-row">
+          <div class="sett-row-info"><div class="sett-row-label">Show reading progress</div><div class="sett-row-sub">Progress bar on cards</div></div>
+          <label class="toggle"><input type="checkbox" id="showProg" checked onchange="saveSett()"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="sett-section">
+        <div class="sett-section-title">Notifications</div>
+        <div class="sett-row">
+          <div class="sett-row-info"><div class="sett-row-label">New chapter alerts</div><div class="sett-row-sub">For bookmarked manga</div></div>
+          <label class="toggle"><input type="checkbox" id="notifCh" checked onchange="saveSett()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="sett-row">
+          <div class="sett-row-info"><div class="sett-row-label">Promotional emails</div><div class="sett-row-sub">Deals and offers</div></div>
+          <label class="toggle"><input type="checkbox" id="notifPromo" onchange="saveSett()"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="sett-section">
+        <div class="sett-section-title">Privacy & Data</div>
+        <div class="sett-row">
+          <div class="sett-row-info"><div class="sett-row-label">Save reading history</div><div class="sett-row-sub">Track what you've read</div></div>
+          <label class="toggle"><input type="checkbox" id="saveHist" checked onchange="saveSett()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="sett-row">
+          <div class="sett-row-info"><div class="sett-row-label">Clear all data</div><div class="sett-row-sub">History, bookmarks, progress</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="clearAllData()">Clear Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-bg" id="editModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Edit Profile</div>
+      <button class="modal-close" onclick="closeEditModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="text-align:center;margin-bottom:18px">
+      <div class="prof-av" style="margin:0 auto 12px;cursor:default" id="editAvPreview"><span id="editAvPrevInit">?</span></div>
+      <div style="font-size:.78rem;color:var(--text-dim);margin-bottom:8px">Choose Avatar</div>
+      <div class="edit-av-opts" id="avOpts" style="justify-content:center"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="form-label">Display Name</label>
+      <input type="text" class="form-input" id="editName" placeholder="Your name">
+    </div>
+    <div class="form-group" style="margin-bottom:18px">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="editEmail" placeholder="your@email.com">
+    </div>
+    <button class="btn btn-primary w100" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<div id="foot-ph"></div>
+<script src="app.js"></script>
+<script>
+const AVATARS=['🦊','🐉','🌸','⚔️','🔥','🌙','🐺','💀','🌊','⭐','🎴','🦋'];
+let selectedAv=localStorage.getItem('al_avatar')||'🦊';
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const u=AL.user;
+  if(!u){location.href='login.html';return;}
+  populateProfile(u);
+  buildPanels();
+  checkHash();
+  // admin
+  if(u.email&&u.email.includes('admin')) document.getElementById('adminLink').style.display='';
+  // default reading mode select
+  document.getElementById('defMode').value=AL.readMode||'rtl';
+});
+
+function populateProfile(u){
+  document.getElementById('profInit').textContent=(u.name||u.email||'U')[0].toUpperCase();
+  document.getElementById('profName').textContent=u.name||'Manga Reader';
+  document.getElementById('profEmail').textContent=u.email||'';
+  const isPrem=AL.premium;
+  document.getElementById('profBadges').innerHTML=
+    (isPrem?`<span class="badge badge-premium">⭐ Premium ${u.plan}</span>`:`<span class="badge badge-free">Free Member</span>`)+
+    `<span class="badge badge-ongoing" style="background:rgba(255,215,0,.1);color:var(--accent);border-color:var(--border)">📖 Reader</span>`;
+  // apply saved avatar emoji
+  const av=localStorage.getItem('al_avatar');
+  if(av) document.getElementById('profInit').textContent=av;
+  // stats
+  document.getElementById('statChapters').textContent=Object.keys(AL.progress).length*3||0;
+  document.getElementById('statManga').textContent=AL.history.length||0;
+  document.getElementById('statBookmarks').textContent=AL.bookmarks.length||0;
+  document.getElementById('statFavorites').textContent=AL.favorites.length||0;
+  // plan box
+  if(isPrem){
+    document.getElementById('currentPlanBox').style.display='block';
+    document.getElementById('currentPlanLabel').textContent='Active plan: '+u.plan.charAt(0).toUpperCase()+u.plan.slice(1)+' · Auto-renews';
+  }
+}
+
+function buildPanels(){
+  buildContinue(); buildHistory(); buildBookmarks(); buildFavorites(); buildDownloads();
+}
+
+/* Continue reading */
+function buildContinue(){
+  const h=AL.history; const el=document.getElementById('crList');
+  if(!h.length){el.innerHTML=emptyState('📖','Nothing here yet','Start reading a manga to continue it here.');return;}
+  el.innerHTML=h.slice(0,8).map(m=>{
+    const prog=AL.progress[`${m.slug}_1`]; const pct=prog?Math.min((prog.page/12)*100,100):10;
+    return `<div class="hist-card" onclick="goReader('${m.slug}',1)">
+      <img src="${m.cover||m.poster}" alt="${m.title}" loading="lazy">
+      <div class="hist-info">
+        <div class="hist-title">${m.title}</div>
+        <div class="hist-meta">Ch.1 · ${Math.round(pct)}% read · ${m.author}</div>
+        <div class="hist-prog"><div class="prog-bar" style="margin-top:6px"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();goReader('${m.slug}',1)" style="flex-shrink:0">Read</button>
+    </div>`;
+  }).join('');
+}
+
+/* History */
+function buildHistory(){
+  const h=AL.history; const el=document.getElementById('histList');
+  if(!h.length){el.innerHTML=emptyState('🕐','No history','Manga you read will appear here.');return;}
+  el.innerHTML=h.map(m=>`
+    <div class="hist-card" onclick="goDetail('${m.slug}')">
+      <img src="${m.cover}" alt="${m.title}" loading="lazy">
+      <div class="hist-info">
+        <div class="hist-title">${m.title}</div>
+        <div class="hist-meta">${m.author} · ${m.chapters} chapters · ${m.genres[0]}</div>
+        <div class="hist-meta" style="margin-top:3px">Read ${timeAgo(m.readAt)}</div>
+      </div>
+    </div>`).join('');
+}
+function clearHistory(){ AL.history=[]; buildHistory(); buildContinue(); toast('History cleared','ok'); }
+function timeAgo(ts){ const s=Math.round((Date.now()-ts)/1000); if(s<60)return 'just now'; if(s<3600)return Math.round(s/60)+'m ago'; if(s<86400)return Math.round(s/3600)+'h ago'; return Math.round(s/86400)+'d ago'; }
+
+/* Bookmarks */
+function buildBookmarks(){
+  const bm=AL.bookmarks; const el=document.getElementById('bmGrid');
+  if(!bm.length){el.innerHTML=emptyState('🔖','No bookmarks','Bookmark manga to save them here.');return;}
+  el.innerHTML=MANGA_DB.filter(m=>bm.includes(m.id)).map(buildCard).join('');
+}
+
+/* Favorites */
+function buildFavorites(){
+  const fv=AL.favorites; const el=document.getElementById('fvGrid');
+  if(!fv.length){el.innerHTML=emptyState('❤️','No favorites','Heart manga to add to favorites.');return;}
+  el.innerHTML=MANGA_DB.filter(m=>fv.includes(m.id)).map(buildCard).join('');
+}
+
+/* Downloads */
+function buildDownloads(){
+  const el=document.getElementById('dlList');
+  if(!AL.premium){
+    el.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:10px">📥</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:7px">Downloads are Premium</div>
+      <p style="color:var(--text-dim);font-size:.85rem;margin-bottom:16px">Upgrade to download chapters for offline reading.</p>
+      <button class="btn btn-primary" onclick="showPanel('plans')">Get Premium</button>
+    </div>`; return;
+  }
+  const demos=MANGA_DB.slice(0,3);
+  el.innerHTML=demos.map(m=>`
+  <div class="dl-item">
+    <img src="${m.cover}" alt="${m.title}" loading="lazy">
+    <div class="dl-info">
+      <div class="dl-title">${m.title}</div>
+      <div class="dl-meta">Chapters 1–5 · ${m.direction.toUpperCase()} mode</div>
+      <div class="dl-size">${(Math.random()*20+10).toFixed(1)} MB · Downloaded</div>
+    </div>
+    <div class="dl-del" onclick="delDownload(this,'${m.title}')" title="Remove">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </div>
+  </div>`).join('');
+}
+function delDownload(btn,title){ btn.closest('.dl-item').remove(); toast(`"${title}" removed from downloads`,'ok'); }
+
+/* Subscribe */
+function subscribe(plan){
+  if(!AL.user){location.href='login.html';return;}
+  const u=AL.user; u.plan=plan; AL.user=u;
+  applyTheme();
+  document.getElementById('currentPlanBox').style.display='block';
+  document.getElementById('currentPlanLabel').textContent='Active plan: '+plan.charAt(0).toUpperCase()+plan.slice(1)+' · Auto-renews';
+  populateProfile(u);
+  toast(`🎉 Welcome to AniLoka ${plan.charAt(0).toUpperCase()+plan.slice(1)} Premium!`,'ok',4000);
+  setTimeout(()=>location.reload(),1200);
+}
+function cancelPlan(){
+  if(!confirm('Cancel your Premium plan?'))return;
+  const u=AL.user; u.plan='free'; AL.user=u;
+  applyTheme(); populateProfile(u);
+  document.getElementById('currentPlanBox').style.display='none';
+  toast('Plan cancelled. You still have access until the end of the period.','info',4000);
+  setTimeout(()=>location.reload(),1200);
+}
+
+/* Panel switching */
+function showPanel(id){
+  document.querySelectorAll('.prof-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('on');
+  // match sidebar
+  document.querySelectorAll('.sidebar-btn').forEach(b=>{
+    if(b.textContent.toLowerCase().includes(id.toLowerCase().slice(0,5))) b.classList.add('on');
+  });
+  history.replaceState(null,'',`profile.html#${id}`);
+}
+function checkHash(){ const h=location.hash.replace('#',''); if(h) showPanel(h); }
+
+/* Edit profile modal */
+function openEditModal(){
+  const u=AL.user||{};
+  document.getElementById('editName').value=u.name||'';
+  document.getElementById('editEmail').value=u.email||'';
+  document.getElementById('editAvPrevInit').textContent=selectedAv;
+  const opts=document.getElementById('avOpts');
+  opts.innerHTML=AVATARS.map(a=>`<div class="av-opt${a===selectedAv?' on':''}" onclick="pickAv('${a}',this)">${a}</div>`).join('');
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEditModal(){ document.getElementById('editModal').classList.remove('open'); }
+function pickAv(a,el){ selectedAv=a; document.getElementById('editAvPrevInit').textContent=a; document.querySelectorAll('.av-opt').forEach(x=>x.classList.remove('on')); el.classList.add('on'); }
+function saveProfile(){
+  const name=document.getElementById('editName').value.trim();
+  const email=document.getElementById('editEmail').value.trim();
+  if(!name){toast('Name required','err');return;}
+  const u=AL.user||{}; u.name=name; u.email=email||u.email; AL.user=u;
+  localStorage.setItem('al_avatar',selectedAv);
+  document.getElementById('profInit').textContent=selectedAv;
+  document.getElementById('profName').textContent=name;
+  closeEditModal(); toast('Profile updated!','ok');
+}
+
+/* Logout */
+function doLogout(){ localStorage.removeItem('al_user'); location.href='login.html'; }
+
+/* Settings */
+function saveSett(){ toast('Preference saved','ok'); }
+function clearAllData(){
+  if(!confirm('Clear all reading data? This cannot be undone.'))return;
+  ['al_history','al_bookmarks','al_progress','al_favorites'].forEach(k=>localStorage.removeItem(k));
+  buildPanels(); toast('All data cleared','ok');
+}
+
+/* Helpers */
+function emptyState(icon,title,sub){
+  return `<div class="empty-state"><div class="empty-icon">${icon}</div><div class="empty-title">${title}</div><p class="empty-sub">${sub}</p></div>`;
+}
+document.getElementById('editModal').addEventListener('click',e=>{if(e.target===document.getElementById('editModal'))closeEditModal();});
+</script>
+</body>
+</html>

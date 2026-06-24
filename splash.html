@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AniLoka Manga</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:100vh}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+#wrap{position:relative;z-index:10;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.s-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,15vw,10rem);letter-spacing:.1em;line-height:1;opacity:0;animation:logoIn 1s cubic-bezier(.22,1,.36,1) .3s forwards}
+.s-logo .ani{color:#fff}.s-logo .loka{color:var(--accent)}
+.s-sub{font-size:clamp(.7rem,2vw,.95rem);font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--text-dim);opacity:0;animation:fadeUp .8s ease 1s forwards}
+.s-welcome{font-family:'Bebas Neue',sans-serif;font-size:clamp(1rem,3vw,1.5rem);letter-spacing:.22em;color:#fff;opacity:0;animation:fadeUp .8s ease 1.3s forwards}
+.s-welcome .hl{color:var(--accent)}
+.s-badge{display:none;background:var(--prem-bg);color:#000;padding:5px 18px;border-radius:20px;font-size:.76rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:0;animation:fadeUp .8s ease 1.5s forwards;box-shadow:0 0 24px var(--glow)}
+.s-bar{width:200px;height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-top:28px;opacity:0;animation:fadeUp .5s ease 1.5s forwards}
+.s-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-glow));border-radius:2px;box-shadow:0 0 8px var(--glow)}
+/* manga pages floating */
+.page-float{position:fixed;opacity:0;border-radius:6px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.08);animation:pageFloat linear infinite}
+@keyframes pageFloat{0%{opacity:0;transform:translateY(100vh) rotate(var(--r))}10%{opacity:.15}90%{opacity:.1}100%{opacity:0;transform:translateY(-20vh) rotate(var(--r))}}
+/* cinematic bars */
+.bar{position:fixed;left:0;right:0;height:9vh;background:#000;z-index:5;transition:height 1.2s cubic-bezier(.4,0,.2,1)}
+#bt{top:0}#bb{bottom:0}
+body.open .bar{height:0}
+/* screen fade */
+#screen{position:fixed;inset:0;z-index:20;background:var(--bg);transition:opacity .7s ease}
+#screen.out{opacity:0;pointer-events:none}
+.ring{position:absolute;border-radius:50%;border:1px solid var(--accent-dim);animation:ring 3s ease-in-out infinite;pointer-events:none}
+@keyframes ring{0%{transform:scale(.7);opacity:.4}50%{opacity:.12}100%{transform:scale(2.4);opacity:0}}
+@keyframes logoIn{from{opacity:0;transform:scale(.65) translateY(28px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="screen">
+  <canvas id="c"></canvas>
+  <div class="bar" id="bt"></div><div class="bar" id="bb"></div>
+  <div class="ring" style="width:360px;height:360px;margin:-180px 0 0 -180px;top:50%;left:50%;animation-delay:0s"></div>
+  <div class="ring" style="width:580px;height:580px;margin:-290px 0 0 -290px;top:50%;left:50%;animation-delay:.9s"></div>
+  <div class="ring" style="width:800px;height:800px;margin:-400px 0 0 -400px;top:50%;left:50%;animation-delay:1.8s"></div>
+  <div id="wrap">
+    <div class="s-logo glow-text"><span class="ani">Ani</span><span class="loka">Loka</span></div>
+    <div class="s-sub">Read · Discover · Experience</div>
+    <div class="s-welcome" id="sWelcome">Welcome to <span class="hl">AniLoka Manga</span></div>
+    <div class="s-badge" id="sBadge">⭐ Premium Member</div>
+    <div class="s-bar"><div class="s-fill" id="sFill"></div></div>
+  </div>
+</div>
+<script src="app.js"></script>
+<script>
+(function(){
+  const c=document.getElementById('c'),ctx=c.getContext('2d');
+  const isPrem=AL.premium, col=isPrem?'138,43,226':'255,215,0';
+  let W,H,pts=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+  resize(); window.addEventListener('resize',resize);
+  for(let i=0;i<90;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+.4,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,a:Math.random()*.5+.15});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${col},${p.a})`;ctx.fill();
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+  // floating manga panels
+  const imgs=['https://images.unsplash.com/photo-1578632767115-351597cf2477?w=120&q=60',
+               'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=120&q=60',
+               'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?w=120&q=60'];
+  imgs.forEach((src,i)=>{
+    const el=document.createElement('div');
+    el.className='page-float';
+    const rot=(Math.random()*16-8).toFixed(1)+'deg';
+    const dur=(14+Math.random()*10).toFixed(1)+'s';
+    const left=(10+Math.random()*80).toFixed(0)+'%';
+    el.style.cssText=`--r:${rot};width:80px;height:120px;left:${left};animation-duration:${dur};animation-delay:${(i*3).toFixed(1)}s`;
+    const img=document.createElement('img');img.src=src;img.style='width:100%;height:100%;object-fit:cover';
+    el.appendChild(img); document.getElementById('screen').appendChild(el);
+  });
+})();
+// loader
+const fill=document.getElementById('sFill');
+let p=0;const iv=setInterval(()=>{p+=Math.random()*3+1;if(p>100)p=100;fill.style.width=p+'%';if(p>=100)clearInterval(iv)},55);
+// premium
+if(AL.premium){
+  document.body.classList.add('premium-theme');
+  document.getElementById('sBadge').style.display='inline-block';
+  document.getElementById('sWelcome').innerHTML='Welcome to <span class="hl">AniLoka Premium</span>';
+}
+// bars open
+setTimeout(()=>document.body.classList.add('open'),80);
+// redirect
+setTimeout(()=>{
+  document.getElementById('screen').classList.add('out');
+  setTimeout(()=>location.href=AL.user?'home.html':'login.html',700);
+},3500);
+</script>
+</body>
+</html>

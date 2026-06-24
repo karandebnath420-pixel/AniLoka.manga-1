@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AniLoka Manga — Sign In</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{min-height:100vh;display:flex;align-items:stretch;overflow-x:hidden}
+.auth-left{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+@media(max-width:780px){.auth-left{display:none}}
+.al-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1578632767115-351597cf2477?w=900&q=80') center/cover}
+.al-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(5,5,5,.2),rgba(5,5,5,.88))}
+.al-content{position:relative;z-index:2;padding:48px;max-width:460px}
+.al-brand{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:.1em;margin-bottom:20px}
+.al-brand .ani{color:#fff}.al-brand .loka{color:var(--accent)}
+.al-headline{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:10px;line-height:1.3}
+.al-sub{color:var(--text-dim);font-size:.88rem;line-height:1.65;max-width:320px}
+.al-feats{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+.al-feat{display:flex;align-items:center;gap:12px;color:var(--text-dim);font-size:.86rem}
+.al-feat-icon{width:30px;height:30px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem}
+.auth-right{width:440px;max-width:100vw;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 38px;background:var(--bg);position:relative}
+@media(max-width:780px){.auth-right{width:100%;padding:32px 22px}}
+.a-logo-m{display:none;font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.1em;margin-bottom:28px;text-align:center}
+.a-logo-m .ani{color:#fff}.a-logo-m .loka{color:var(--accent)}
+@media(max-width:780px){.a-logo-m{display:block}}
+.a-tabs{display:flex;margin-bottom:28px;border-bottom:1px solid var(--border)}
+.a-tab{flex:1;padding:11px;text-align:center;font-weight:700;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;transition:color .2s;border-bottom:2px solid transparent;margin-bottom:-1px}
+.a-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.a-form{display:flex;flex-direction:column;gap:14px;width:100%;max-width:360px}
+.a-form.gone{display:none}
+.social-row{display:flex;gap:10px}
+.social-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);color:#fff;font-size:.85rem;font-weight:600;transition:border-color .2s,background .2s;cursor:pointer}
+.social-btn:hover{border-color:var(--accent);background:var(--card2)}
+.forgot-link{font-size:.8rem;color:var(--accent);align-self:flex-end;margin-top:-6px;transition:opacity .2s;cursor:pointer}
+.forgot-link:hover{opacity:.65}
+.a-submit{width:100%;padding:14px;font-size:.92rem}
+.a-note{font-size:.75rem;color:var(--text-dim);text-align:center;max-width:300px;margin:0 auto;line-height:1.5}
+.a-note a{color:var(--accent)}
+#forgotWrap{display:none;flex-direction:column;gap:14px;width:100%;max-width:360px}
+#forgotWrap.show{display:flex}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:.83rem;cursor:pointer;transition:color .2s;margin-bottom:4px}
+.back-btn:hover{color:#fff}
+.success-wrap{display:none;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.success-wrap.show{display:flex}
+.success-icon{width:68px;height:68px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.8rem;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+</style>
+</head>
+<body class="page-in">
+<div class="auth-left">
+  <div class="al-bg"></div>
+  <div class="al-content">
+    <div class="al-brand"><span class="ani">Ani</span><span class="loka">Loka</span></div>
+    <div class="al-headline">India's #1 Manga<br>Reading Platform</div>
+    <p class="al-sub">Thousands of manga, manhwa, manhua & webtoons. Read in any direction — RTL, LTR, or scroll.</p>
+    <div class="al-feats">
+      <div class="al-feat"><div class="al-feat-icon">📖</div><span>50,000+ chapters across all genres</span></div>
+      <div class="al-feat"><div class="al-feat-icon">🔄</div><span>RTL, LTR & vertical scroll modes</span></div>
+      <div class="al-feat"><div class="al-feat-icon">⭐</div><span>Premium 4K & ad-free reading</span></div>
+      <div class="al-feat"><div class="al-feat-icon">📥</div><span>Offline downloads for Premium users</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="auth-right">
+  <div class="a-logo-m"><span class="ani">Ani</span><span class="loka">Loka</span></div>
+  <div class="a-tabs" id="aTabs">
+    <div class="a-tab active" data-t="login" onclick="switchTab('login')">Sign In</div>
+    <div class="a-tab"       data-t="signup" onclick="switchTab('signup')">Register</div>
+  </div>
+
+  <!-- LOGIN -->
+  <form class="a-form" id="loginForm" onsubmit="doLogin(event)" novalidate>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="lEmail" placeholder="you@example.com" autocomplete="email">
+      <span class="form-error" id="lEmailE">Enter a valid email.</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="pw-wrap">
+        <input type="password" class="form-input" id="lPw" placeholder="Your password" autocomplete="current-password">
+        <button type="button" class="pw-eye" onclick="toggleEye('lPw',this)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <span class="form-error" id="lPwE">Password required.</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.83rem;color:var(--text-dim)">
+        <input type="checkbox" id="remMe" style="accent-color:var(--accent)"> Remember me
+      </label>
+      <span class="forgot-link" onclick="showForgot()">Forgot password?</span>
+    </div>
+    <button type="submit" class="btn btn-primary a-submit">Sign In</button>
+    <div class="divider">or</div>
+    <div class="social-row">
+      <button type="button" class="social-btn" onclick="socialAuth('Google')">
+        <svg width="17" height="17" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Google
+      </button>
+      <button type="button" class="social-btn" onclick="socialAuth('Apple')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.29.07 2.17.72 2.93.72.76 0 2.18-.89 3.67-.76 1.54.13 2.69.83 3.41 2.07-3.15 1.89-2.64 5.9.58 7.48-.68 1.43-1.59 2.83-2.59 3.37zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        Apple
+      </button>
+    </div>
+    <p class="a-note">By signing in you agree to our <a href="#">Terms</a> & <a href="#">Privacy Policy</a>.</p>
+  </form>
+
+  <!-- SIGNUP -->
+  <form class="a-form gone" id="signupForm" onsubmit="doSignup(event)" novalidate>
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" class="form-input" id="sName" placeholder="Your name" autocomplete="name">
+      <span class="form-error" id="sNameE">Name required.</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="sEmail" placeholder="you@example.com" autocomplete="email">
+      <span class="form-error" id="sEmailE">Enter a valid email.</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="pw-wrap">
+        <input type="password" class="form-input" id="sPw" placeholder="Min 8 characters" autocomplete="new-password">
+        <button type="button" class="pw-eye" onclick="toggleEye('sPw',this)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <span class="form-error" id="sPwE">Min 8 characters.</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirm Password</label>
+      <div class="pw-wrap">
+        <input type="password" class="form-input" id="sPwC" placeholder="Re-enter password" autocomplete="new-password">
+        <button type="button" class="pw-eye" onclick="toggleEye('sPwC',this)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <span class="form-error" id="sPwCE">Passwords don't match.</span>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.83rem;color:var(--text-dim)">
+      <input type="checkbox" id="agreeChk" style="accent-color:var(--accent)">
+      I agree to the <a href="#" style="color:var(--accent);margin-left:3px">Terms</a>&nbsp;&&nbsp;<a href="#" style="color:var(--accent)">Privacy</a>
+    </label>
+    <span class="form-error" id="agreeE">You must agree to continue.</span>
+    <button type="submit" class="btn btn-primary a-submit">Create Account</button>
+    <p class="a-note">Already have an account? <a onclick="switchTab('login')" style="cursor:pointer">Sign in</a></p>
+  </form>
+
+  <!-- FORGOT -->
+  <div id="forgotWrap">
+    <div class="back-btn" onclick="hideForgot()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back
+    </div>
+    <div style="font-size:1.3rem;font-weight:800;color:#fff">Reset Password</div>
+    <p style="color:var(--text-dim);font-size:.85rem">We'll send a reset link to your email.</p>
+    <div class="form-group" style="width:100%;max-width:360px">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="fEmail" placeholder="you@example.com">
+      <span class="form-error" id="fEmailE">Enter a valid email.</span>
+    </div>
+    <button class="btn btn-primary" style="width:100%;max-width:360px;padding:14px" onclick="doForgot()">Send Reset Link</button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-wrap" id="successWrap">
+    <div class="success-icon">✓</div>
+    <div style="font-size:1.3rem;font-weight:800;color:#fff" id="successTitle">Welcome!</div>
+    <p style="color:var(--text-dim);font-size:.86rem" id="successMsg">Redirecting…</p>
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+if(AL.user) location.href='home.html';
+function switchTab(t){
+  document.querySelectorAll('.a-tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));
+  document.getElementById('loginForm').classList.toggle('gone',t!=='login');
+  document.getElementById('signupForm').classList.toggle('gone',t!=='signup');
+  document.getElementById('aTabs').style.display='';
+  hideForgot();
+}
+function toggleEye(id,btn){
+  const i=document.getElementById(id); const show=i.type==='password';
+  i.type=show?'text':'password';
+  btn.innerHTML=show
+    ?`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    :`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+function err(fid,eid,msg,show){
+  const f=document.getElementById(fid),e=document.getElementById(eid);
+  if(f)f.classList.toggle('err',show);
+  if(e){if(msg)e.textContent=msg;e.classList.toggle('show',show)}
+  return show;
+}
+function doLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('lEmail').value.trim();
+  const pw=document.getElementById('lPw').value;
+  let ok=true;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err('lEmail','lEmailE','Enter a valid email.',true);ok=false}else err('lEmail','lEmailE','',false);
+  if(!pw){err('lPw','lPwE','Password required.',true);ok=false}else err('lPw','lPwE','',false);
+  if(!ok)return;
+  const stored=localStorage.getItem('al_reg_'+email);
+  if(stored){const u=JSON.parse(stored);if(u.password!==pw){err('lPw','lPwE','Incorrect password.',true);return;}loginSuccess(u);}
+  else loginSuccess({name:email.split('@')[0],email,plan:'free'});
+}
+function doSignup(e){
+  e.preventDefault();
+  const name=document.getElementById('sName').value.trim();
+  const email=document.getElementById('sEmail').value.trim();
+  const pw=document.getElementById('sPw').value;
+  const pwc=document.getElementById('sPwC').value;
+  const agree=document.getElementById('agreeChk').checked;
+  let ok=true;
+  if(!name){err('sName','sNameE','Name required.',true);ok=false}else err('sName','sNameE','',false);
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err('sEmail','sEmailE','Valid email required.',true);ok=false}else err('sEmail','sEmailE','',false);
+  if(pw.length<8){err('sPw','sPwE','Min 8 characters.',true);ok=false}else err('sPw','sPwE','',false);
+  if(pw!==pwc){err('sPwC','sPwCE','Passwords don\'t match.',true);ok=false}else err('sPwC','sPwCE','',false);
+  const ae=document.getElementById('agreeE');
+  if(!agree){ae.classList.add('show');ok=false}else ae.classList.remove('show');
+  if(!ok)return;
+  const u={name,email,plan:'free',password:pw};
+  localStorage.setItem('al_reg_'+email,JSON.stringify(u));
+  loginSuccess(u);
+}
+function loginSuccess(u){
+  AL.user={name:u.name,email:u.email,plan:u.plan||'free'};
+  document.getElementById('loginForm').classList.add('gone');
+  document.getElementById('signupForm').classList.add('gone');
+  document.getElementById('aTabs').style.display='none';
+  const sw=document.getElementById('successWrap');
+  document.getElementById('successTitle').textContent='Welcome, '+u.name+'!';
+  document.getElementById('successMsg').textContent='Taking you to your reading feed…';
+  sw.classList.add('show');
+  setTimeout(()=>location.href='home.html',2000);
+}
+function showForgot(){
+  document.getElementById('loginForm').classList.add('gone');
+  document.getElementById('aTabs').style.display='none';
+  document.getElementById('forgotWrap').classList.add('show');
+}
+function hideForgot(){
+  document.getElementById('forgotWrap').classList.remove('show');
+  document.getElementById('aTabs').style.display='';
+  document.getElementById('loginForm').classList.remove('gone');
+}
+function doForgot(){
+  const v=document.getElementById('fEmail').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
+    document.getElementById('fEmail').classList.add('err');
+    document.getElementById('fEmailE').classList.add('show');return;
+  }
+  document.getElementById('fEmail').classList.remove('err');
+  document.getElementById('fEmailE').classList.remove('show');
+  toast('Reset link sent to '+v,'ok');
+  setTimeout(hideForgot,1600);
+}
+function socialAuth(p){toast(p+' login coming soon!','info')}
+</script>
+</body>
+</html>
